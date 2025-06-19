@@ -1,0 +1,287 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pokemon.pok_name }} - Pokédex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-red-700 text-white">
+
+    <!-- Header -->
+    <header class="bg-red-900 text-center py-6 shadow-lg">
+        <h1 class="text-4xl font-bold">Pokédex 6G</h1>
+    </header>
+
+    <!-- Détails du Pokémon -->
+    <div class="container mx-auto p-6 mt-6 bg-gray-800 shadow-md rounded-lg">
+        <div class="flex flex-wrap items-center justify-center">
+            <!-- Image du Pokémon -->
+            <div class="w-full sm:w-1/2 md:w-1/3 p-4 text-center rounded-lg" style="background: {{ background_color }};">
+                <div class="flex justify-between items-center">
+                    <p class="text-2xl font-bold">n° {{ pokemon.id }}</p>
+                    <button onclick="playCry('{{ cry }}')" class="bg-white p-2 rounded-full hover:bg-gray-600">
+                        🔊
+                    </button>
+                </div>
+                <img src="{{ sprite }}" alt="{{ pokemon.pok_name }}" class="mx-auto rounded-lg shadow-xl">
+                <h2 class="text-2xl font-bold mt-4">{{ pokemon.pok_name }}</h2>
+                {% if nickname %}
+                    <h3 class="text-xl font-semibold italic mt-2">"{{ nickname }}"</h3>
+                {% endif %}
+            </div>
+
+            <!-- Informations du Pokémon -->
+            <div class="w-full sm:w-1/2 md:w-2/3 p-6 bg-gray-900 rounded-lg">
+                <h3 class="text-xl font-semibold py-2">Types :</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for type in types %}
+                        {% if type == "Fire" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #F08030;">{{ type }}</span>
+                        {% elif type == "Water" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #6890F0;">{{ type }}</span>
+                        {% elif type == "Grass" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #78C850;">{{ type }}</span>
+                        {% elif type == "Electric" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #F8D030;">{{ type }}</span>
+                        {% elif type == "Ice" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #98D8D8;">{{ type }}</span>
+                        {% elif type == "Fighting" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #C03028;">{{ type }}</span>
+                        {% elif type == "Poison" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #A040A0;">{{ type }}</span>
+                        {% elif type == "Ground" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #E0C068;">{{ type }}</span>
+                        {% elif type == "Flying" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #A890F0;">{{ type }}</span>
+                        {% elif type == "Psychic" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #F85888;">{{ type }}</span>
+                        {% elif type == "Bug" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #A8B820;">{{ type }}</span>
+                        {% elif type == "Rock" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #B8A038;">{{ type }}</span>
+                        {% elif type == "Ghost" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #705898;">{{ type }}</span>
+                        {% elif type == "Dragon" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #7038F8;">{{ type }}</span>
+                        {% elif type == "Dark" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #705848;">{{ type }}</span>
+                        {% elif type == "Steel" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #B8B8D0;">{{ type }}</span>
+                        {% elif type == "Fairy" %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #EE99AC;">{{ type }}</span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded text-white" style="background-color: #A8A878;">{{ type }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <h3 class="text-xl font-semibold mt-4">Abilities :</h3>
+                <ul class="list-disc pl-6">
+                    {% for ability in abilities %}
+                        <li>{{ ability }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h3 class="text-xl font-semibold mt-4 py-2">Description :</h3>
+                <p>{{ description.flavor_text }}</p>
+
+                <h3 class="text-xl font-semibold py-2 mt-4">Base Stats :</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    {% for stat, info in stats_info.items %}
+                        <div>
+                            <p>{{ stat }}: <span class="text-{{ info.color }}">{{ info.value }}</span></p>
+                            <div class="h-2 bg-gray-600 rounded-full">
+                                <div class="h-full rounded-full" style="width: {{ info.percentage }}%; background-color: {{ info.color }};"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <h4 class="text-xl font-semibold py-2 mt-4">Base Experience : {{ pokemon.pok_base_experience }}</h4>
+
+                <h3 class="text-xl font-semibold mt-4">Effectiveness :</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h5 class="font-semibold py-2">Weaknesses :</h5>
+                        <ul class="flex flex-wrap gap-2">
+                            {% for weakness in effectiveness.weaknesses %}
+                                {% if weakness == "Fire" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F08030;">{{ weakness }}</li>
+                                {% elif weakness == "Water" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #6890F0;">{{ weakness }}</li>
+                                {% elif weakness == "Grass" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #78C850;">{{ weakness }}</li>
+                                {% elif weakness == "Electric" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F8D030;">{{ weakness }}</li>
+                                {% elif weakness == "Ice" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #98D8D8;">{{ weakness }}</li>
+                                {% elif weakness == "Fighting" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #C03028;">{{ weakness }}</li>
+                                {% elif weakness == "Poison" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A040A0;">{{ weakness }}</li>
+                                {% elif weakness == "Ground" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #E0C068;">{{ weakness }}</li>
+                                {% elif weakness == "Flying" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A890F0;">{{ weakness }}</li>
+                                {% elif weakness == "Psychic" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F85888;">{{ weakness }}</li>
+                                {% elif weakness == "Bug" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8B820;">{{ weakness }}</li>
+                                {% elif weakness == "Rock" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8A038;">{{ weakness }}</li>
+                                {% elif weakness == "Ghost" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705898;">{{ weakness }}</li>
+                                {% elif weakness == "Dragon" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #7038F8;">{{ weakness }}</li>
+                                {% elif weakness == "Dark" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705848;">{{ weakness }}</li>
+                                {% elif weakness == "Steel" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8B8D0;">{{ weakness }}</li>
+                                {% elif weakness == "Fairy" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #EE99AC;">{{ weakness }}</li>
+                                {% else %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8A878;">{{ weakness }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h6 class="font-semibold py-2">Resistances :</h5>
+                        <ul class="flex flex-wrap gap-2">
+                            {% for resistance in effectiveness.resistances %}
+                                {% if resistance == "Fire" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F08030;">{{ resistance }}</li>
+                                {% elif resistance == "Water" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #6890F0;">{{ resistance }}</li>
+                                {% elif resistance == "Grass" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #78C850;">{{ resistance }}</li>
+                                {% elif resistance == "Electric" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F8D030;">{{ resistance }}</li>
+                                {% elif resistance == "Ice" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #98D8D8;">{{ resistance }}</li>
+                                {% elif resistance == "Fighting" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #C03028;">{{ resistance }}</li>
+                                {% elif resistance == "Poison" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A040A0;">{{ resistance }}</li>
+                                {% elif resistance == "Ground" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #E0C068;">{{ resistance }}</li>
+                                {% elif resistance == "Flying" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A890F0;">{{ resistance }}</li>
+                                {% elif resistance == "Psychic" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F85888;">{{ resistance }}</li>
+                                {% elif resistance == "Bug" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8B820;">{{ resistance }}</li>
+                                {% elif resistance == "Rock" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8A038;">{{ resistance }}</li>
+                                {% elif resistance == "Ghost" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705898;">{{ resistance }}</li>
+                                {% elif resistance == "Dragon" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #7038F8;">{{ resistance }}</li>
+                                {% elif resistance == "Dark" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705848;">{{ resistance }}</li>
+                                {% elif resistance == "Steel" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8B8D0;">{{ resistance }}</li>
+                                {% elif resistance == "Fairy" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #EE99AC;">{{ resistance }}</li>
+                                {% else %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8A878;">{{ resistance }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h7 class="font-semibold py-2">Immunities :</h5>
+                        <ul class="flex flex-wrap gap-2">
+                            {% for immunitie in effectiveness.immunities %}
+                                {% if immunitie == "Fire" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F08030;">{{ immunitie }}</li>
+                                {% elif immunitie == "Water" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #6890F0;">{{ immunitie }}</li>
+                                {% elif immunitie == "Grass" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #78C850;">{{ immunitie }}</li>
+                                {% elif immunitie == "Electric" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F8D030;">{{ immunitie }}</li>
+                                {% elif immunitie == "Ice" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #98D8D8;">{{ immunitie }}</li>
+                                {% elif immunitie == "Fighting" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #C03028;">{{ immunitie }}</li>
+                                {% elif immunitie == "Poison" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A040A0;">{{ immunitie }}</li>
+                                {% elif immunitie == "Ground" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #E0C068;">{{ immunitie }}</li>
+                                {% elif immunitie == "Flying" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A890F0;">{{ immunitie }}</li>
+                                {% elif immunitie == "Psychic" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #F85888;">{{ immunitie }}</li>
+                                {% elif immunitie == "Bug" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8B820;">{{ immunitie }}</li>
+                                {% elif immunitie == "Rock" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8A038;">{{ immunitie }}</li>
+                                {% elif immunitie == "Ghost" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705898;">{{ immunitie }}</li>
+                                {% elif immunitie == "Dragon" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #7038F8;">{{ immunitie }}</li>
+                                {% elif immunitie == "Dark" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #705848;">{{ immunitie }}</li>
+                                {% elif immunitie == "Steel" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #B8B8D0;">{{ immunitie }}</li>
+                                {% elif immunitie == "Fairy" %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #EE99AC;">{{ immunitie }}</li>
+                                {% else %}
+                                    <li class="px-3 py-1 rounded text-white" style="background-color: #A8A878;">{{ immunitie }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Navigation Pokémon -->
+    <div class="flex justify-center mt-6 space-x-4">
+        <a href="{% url 'pokemon_detail' previous_pokemon_id %}" class="bg-gray-900 px-4 py-2 rounded-md text-white text-left font-bold hover:bg-gray-700">&lt;</a>
+        <a href="{% url 'pokemon_detail' next_pokemon_id %}" class="bg-gray-900 px-4 py-2 rounded-md text-white text-right font-bold hover:bg-gray-700">&gt;</a>
+    </div>
+    </div>
+
+    <!-- Famille d'Évolution -->
+    <div class="mt-6">
+        <h3 class="text-2xl font-bold text-center mb-4">Evolution Family</h3>
+        <div class="flex flex-col items-center gap-4">
+            {% for chain in evolution_data %}
+                <div class="flex items-center gap-2">
+                    {% for evolution in chain %}
+                        <a href="{% url 'pokemon_detail' evolution.id %}" class="hover:opacity-80">
+                            <img src="{{ evolution.sprite }}" alt="{{ evolution.name }}" class="w-20 h-15 rounded-full shadow-md" style="background: {{background_color}};">
+                        </a>
+                        <p class="text-center mt-2 text-sm font-semibold">{{ evolution.name }}</p>
+                        {% if not forloop.last %}
+                            <span class="text-xl font-bold">→</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Retour à la liste -->
+    <div class="text-center mt-8">
+        <a href="{% url 'pokemon_list' %}" class="bg-black px-6 py-3 rounded-md text-white hover:bg-gray-600">
+            Back to Pokémon List
+        </a>
+    </div>
+
+
+
+    <script>
+        function playCry(cryUrl) {
+            const audio = new Audio(cryUrl);
+            audio.play();
+        }
+    </script>
+
+</body>
+</html>

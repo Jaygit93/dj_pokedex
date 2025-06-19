@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-red-700 text-white">
+
+    <!-- Header -->
+    <header class="bg-red-900 text-center py-6 shadow-lg">
+        <h1 class="text-4xl font-bold">Pokédex 6G</h1>
+    </header>
+
+    <!-- Barre de filtres -->
+    <div class="container mx-auto p-4 bg-red-800 shadow-md rounded-lg mt-6">
+        <form method="GET" class="flex flex-wrap items-center gap-4">
+            <input type="text" name="name" placeholder="Search Pokémon..."
+                   class="border p-2 rounded-md text-black" value="{{ request.GET.name|default:'' }}">
+
+            <select name="type" class="border p-2 rounded-md text-black">
+                <option value="">All Types</option>
+                {% for type in all_types %}
+                    <option value="{{ type }}" {% if request.GET.type == type %}selected{% endif %}>
+                        {{ type }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="second_type" class="border p-2 rounded-md text-black">
+                <option value="">Second Type (Optional)</option>
+                {% for type in all_types %}
+                    <option value="{{ type }}" {% if request.GET.second_type == type %}selected{% endif %}>
+                        {{ type }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <input type="number" name="number_min" placeholder="Min" min="1" max="721"
+                   class="border p-2 rounded-md text-black w-20" value="{{ number_min }}">
+            <input type="number" name="number_max" placeholder="Max" min="1" max="721"
+                   class="border p-2 rounded-md text-black w-20" value="{{ number_max }}">
+
+            <button type="submit" class="bg-yellow-400 px-4 py-2 rounded-md text-black font-bold hover:bg-yellow-500">
+                Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Nombre de Pokémon affichés -->
+    <div class="text-center mt-4">
+        <p class="text-xl font-semibold">Showing {{ pokemon_data|length }} Pokémon</p>
+    </div>
+
+    <!-- Liste des Pokémon -->
+    <div class="container mx-auto grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 p-4">
+        {% for pokemon in pokemon_data %}
+        <div class=" w-100 border-4 border-white bg-gray-900 rounded-xl shadow-lg border-4">
+            <div class="flex items-center justify-between mb-2 px-3">
+                <p class="text-white-600 font-bold">n° {{ pokemon.id }}</p>
+                <button onclick="playCry('{{ pokemon.cry }}')" class="p-2 hover:bg-gray-600">
+                    🔊
+                </button>
+            </div>
+            <div class="text-center">
+                <a href="{% url 'pokemon_detail' pokemon.id %}" class="hover:underline"><h2 class="text-2xl font-bold">{{ pokemon.name }}</h2></a>
+            </div>
+            <div class="flex justify-center my-6 w-full py-5 border-2 border-white" style="background: {{ pokemon.background }};">
+                <img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" class="w-32 h-32">
+            </div>
+            <div class="flex justify-center gap-2 p-3">
+                {% for type in pokemon.types %}
+                <span class="px-3 py-1" style="background-color: {% if type == 'Fire' %}#F08030{% elif type == 'Water' %}#6890F0{% elif type == 'Grass' %}#78C850{% elif type == 'Electric' %}#F8D030{% elif type == 'Ice' %}#98D8D8{% elif type == 'Fighting' %}#C03028{% elif type == 'Poison' %}#A040A0{% elif type == 'Ground' %}#E0C068{% elif type == 'Flying' %}#A890F0{% elif type == 'Psychic' %}#F85888{% elif type == 'Bug' %}#A8B820{% elif type == 'Rock' %}#B8A038{% elif type == 'Ghost' %}#705898{% elif type == 'Dragon' %}#7038F8{% elif type == 'Dark' %}#705848{% elif type == 'Steel' %}#B8B8D0{% elif type == 'Fairy' %}#EE99AC{% else %}#A8A878{% endif %}">
+                    {{ type }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button onclick="scrollToTop()" style="position: fixed; bottom: 20px; right: 20px; background: red; padding: 15px; border-radius: 50%; font-size: 24px; border: 2px solid white; color: white;">
+        ↑
+    </button>
+
+    <script>
+        function playCry(cryUrl) {
+            const audio = new Audio(cryUrl);
+            audio.play();
+        }
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+
+</body>
+</html>

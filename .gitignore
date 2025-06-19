@@ -1,0 +1,17 @@
+# Fichiers de logs
+logs/
+*.log
+
+# Fichiers de migration Django
+**/migrations/*.py
+**/migrations/*.pyc
+
+# Environnement virtuel Python
+venv/
+.env/
+
+/pokedex/__pycache__/
+/pokedex/migrations/
+
+/pokedex_project/__pycache__/
+/pokedex_project/cache/
