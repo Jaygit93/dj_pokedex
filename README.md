@@ -47,8 +47,8 @@ Ce projet est une application Django permettant de consulter une base de donnée
 ### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/votre-utilisateur/django-pokedex.git
-cd django-pokedex
+git clone https://github.com/Jaygit93/dj_pokedex.git
+cd <nom_du_projet>
 ```
 
 ### 2. Construire et démarrer les conteneurs
@@ -61,8 +61,6 @@ docker-compose up --build
 
 - Interface Pokédex (via Nginx) : http://localhost:8072
 - phpMyAdmin : http://localhost:8087  
-  - **Utilisateur** : `root`  
-  - **Mot de passe** : `passroot`  
   - **Hôte** : `mysql`
 
 ---
